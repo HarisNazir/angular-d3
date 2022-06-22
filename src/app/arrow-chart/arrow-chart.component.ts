@@ -1,77 +1,53 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as d3 from 'd3';
-// import get from 'lodash/get';
 
 @Component({
   selector: 'app-arrow-chart',
   templateUrl: './arrow-chart.component.html',
-  styleUrls: ['./arrow-chart.component.scss']
+  styleUrls: ['./arrow-chart.component.scss'],
 })
 export class ArrowChartComponent implements OnInit {
-  
-  @Input() data: any;
+  private data = [
+    {start: 1 / 180 * Math.PI, end: 119 / 180 * Math.PI,fill:"#43a2ca",inner:150,outer:200},
+    {start: 121 / 180 * Math.PI, end: 239 / 180 * Math.PI,fill:"#43a2ca",inner:150,outer:200},
+    {start: 241 / 180 * Math.PI, end: 359 / 180 * Math.PI,fill:"#43a2ca",inner:150,outer:200},
+    {start: 119 / 180 * Math.PI, end: 1 / 180 * Math.PI,fill:"#0868ac",inner:205,outer:215},
+    {start: 239 / 180 * Math.PI, end: 121 / 180 * Math.PI,fill:"#0868ac",inner:205,outer:215},
+    {start: 359 / 180 * Math.PI, end: 241 / 180 * Math.PI,fill:"#0868ac",inner:205,outer:215},	
+    {start: 200 / 180 * Math.PI, end: -159 / 180 * Math.PI,fill:"#e0f3db",inner:100,outer:145},	
+    {start: 1 / 180 * Math.PI, end: 359 / 180 * Math.PI,fill:"#a8ddb5",inner:45,outer:95}
+  ];
 
-  private width = 500;
-  private height = 500;
+    private svg: any;
+    private margin = 50;
+    private width = 750 - this.margin * 2;
+    private height = 400 - this.margin * 2;
 
-  c = Math.min(this.width, this.height)/2;
-
-
-  //Draw Arrow Chart
-  private drawArrowChart(): void {
-    const svg = d3.select("figure#arrow")
-      .append("svg")
-      .attr("width", this.width)
-      .attr("height", this.height)
-      .append("g")
-      .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
-
-    const partition = d3.partition()
-      .size([2 * Math.PI, this.c]);
-    
-    const arc = d3.arc()
-    .innerRadius(40)
-    .outerRadius(45)
-    .startAngle(100)
-    .endAngle(2 * 180);
-    
-    const g = svg.selectAll("g")
-      .data(partition(this.data))
-      .enter().append("g")
-      .attr("transform", d => `rotate(${(d.x0 + d.x1) / 2 * 180 / Math.PI})`);
-
-    g.append("path")
-      .attr('d', function(d) {
-        return d3.arc()({
-          innerRadius: 40,
-          outerRadius: 45,
-          startAngle: 100,
-          endAngle: 2 * 180
-        })
-      })
-      .style("fill", d => d.depth ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.5)");
-    
-    g.append("text")
-      .attr("dy", "0.35em")
-      .attr("fill", "white")
-      .attr("text-anchor", "middle")
-      .text((d: any) => d.data.label);
-  }
-
-  constructor() { }
-
-  ngOnInit(): void {
-    if(this.data){
-      this.drawArrowChart();
-
+    private createSvg(): void {
+        this.svg = d3.select("figure#arrow")
+        .append("svg")
+        .attr("width", this.width)
+        .attr("height", this.height)
+        .append("g")
+        .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
     }
-  }
 
-  ngOnChanges(changes: any): void {
-    this.drawArrowChart();
-    // if(get(changes, 'data.currentValue')){
+    private createArc(data: any[]): void {
+        const arc = d3.arc()
+        .innerRadius(50)
+        .outerRadius(70)
+        .startAngle(45 * (Math.PI / 180))
+        .endAngle(3);
 
-    // }
-  }
+        this.svg.append("g")
+        .attr("d", arc)
+        .attr("transform", "translate(0," + this.height + ")");
+    }
 
+    constructor() {}
+
+    ngOnInit(): void {
+        this.createSvg();
+        this.createArc(this.data);
+    }
 }

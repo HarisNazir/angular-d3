@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ArrowChartComponent } from './arrow-chart.component';
+import { ArrowChartComponent } from './OLDarrow-chart.component';
 
 @NgModule({
   declarations: [

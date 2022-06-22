@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ArrowChartComponent } from './arrow-chart.component';
+import { ArrowChartComponent } from './OLDarrow-chart.component';
 
 describe('ArrowChartComponent', () => {
   let component: ArrowChartComponent;
