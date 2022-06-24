@@ -1,87 +1,109 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import * as d3 from 'd3';
 
-type Data = {
-  year: number;
-  spending: number;
-}
 @Component({
   selector: 'app-line-chart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
 export class LineChartComponent implements OnInit {
-  // Sample Line Chart Data
-  private data: Data[] = [
-  { year: 2016, spending: 100 },
-  { year: 2017, spending: 200 },
-  { year: 2018, spending: 300 },
-  { year: 2019, spending: 400 },
-  { year: 2020, spending: 500 },
-  { year: 2021, spending: 600 },
-  { year: 2022, spending: 700 }
-  ];
 
- // Create Line Chart using D3.js
-  createLineChart() {
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-    const width = 960 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+  @Input() public data!: { value: number, date: string }[];
+  
+  private width = 700;
+  private height = 700;
+  private margin = 50;
+  
+  public svg: any;
+  public svgInner: any;
+  public yScale: any;
+  public xScale: any;
+  public xAxis: any;
+  public yAxis: any;
+  public lineGroup: any;
 
-    const x = d3.scaleLinear()
-      .domain([2016, 2022])
-      .range([0, width]);
+  public constructor(public chartElem: ElementRef) { }
 
-    const y = d3.scaleLinear()
-      .domain([0, d3.max(this.data, d => d.spending) || 0])
-      .range([height, 0]);
-    
-    const formattedData: any = this.data.map(d => [d.year, d.spending]);
-
-    const line: any = d3.line(formattedData[0])
-      .x(d => x(d[0]))
-      .y(d => y(d[1]));
-
-    const svg = d3.select('#line')
+  initChart() {
+    this.svg = d3.select('#linechart')
       .append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+      .attr('height', this.height);
 
-    svg.append('g')
-      .attr('class', 'axis axis--x')
-      .attr('transform', `translate(0, ${height})`)
-      .call(d3.axisBottom(x));
+    this.svgInner = this.svg.append('g')
+      .style('transform', `translate(${this.margin}px, ${this.margin}px)`);
 
-    svg.append('g')
-      .attr('class', 'axis axis--y')
-      .call(d3.axisLeft(y))
-      .append('text')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', 6)
-      .attr('dy', '0.71em')
-      .attr('text-anchor', 'end')
-      .text('Spending ($)');
-
-    svg.append('path')
-      .datum(this.data)
-      .attr('class', 'line')
-      .attr('d', line);
-
-    svg.selectAll('.dot')
-      .data(this.data)
-      .enter().append('circle')
-      .attr('class', 'dot')
-      .attr('cx', d => x(d.year))
-      .attr('cy', d => y(d.spending))
-      .attr('r', 3);
   }
 
-  constructor() { }
+  drawLineChart() {
+    this.yScale = d3.scaleLinear()
+      .domain([0, d3.max(this.data, d => d.value) || 0])
+      .range([this.height - this.margin, this.margin]);
+
+    this.xScale=d3.scaleTime()
+      .domain(d3.extent(this.data, (d: any)=> new Date(d.date)) as any);
+
+    this.yAxis = this.svgInner.append('g')
+      .attr('id', 'y-axis')
+      .style('transform', `translate(` + this.margin + `px, 0)`);
+
+    this.xAxis = this.svgInner.append('g')
+      .attr('id', 'x-axis')
+      .style('transform', `translate(0, ` + (this.height - 2 * this.margin) + `px)`);
+
+    this.lineGroup = this.svgInner.append('g')
+      .append('path')
+      .attr('id', 'line-group')
+      .style('fill', 'none')
+      .style('stroke', 'red')
+      .style('stroke-width', '2px');
+
+    this.width = this.chartElem.nativeElement.getBoundingClientRect().width;
+
+    this.svg.attr('width', this.width);
+
+    this.xScale.range([this.margin, this.width - 2 * this.margin]);
+
+    const xAxis = d3
+      .axisBottom(this.xScale)
+      .ticks(10)
+      .tickFormat(d3.timeFormat('%m / %Y') as any);
+
+    this.xAxis.call(xAxis);
+
+    const yAxis = d3
+      .axisRight(this.yScale);
+
+    this.yAxis.call(yAxis);
+
+    const line = d3
+      .line()
+      .x(d=>d[0])
+      .y(d=>d[1])
+      .curve(d3.curveMonotoneX);
+
+    const points: [number, number][]=this.data.map(
+      (d: any) => [this.xScale(new Date(d.date)), this.yScale(d.value)]
+    );
+
+    this.lineGroup.attr('d', line(points));
+    
+  }
+
+  public ngOnChange(changes: any): void{
+    if (changes.hasOwnProperty('data') && this.data){
+      this.initChart();
+      this.drawLineChart();
+      window.addEventListener('resize', () => this.drawLineChart());
+    }
+  }
+
+
+  
 
   ngOnInit(): void {
-    this.createLineChart();
+    this.initChart();
+    this.drawLineChart();
+
   }
 
 }
