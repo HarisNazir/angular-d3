@@ -49,11 +49,11 @@ export class LineChartComponent implements OnInit {
       .domain(d3.extent(this.data, (d: any)=> new Date(d.date)) as any);
 
     this.yAxis = this.svgInner.append('g')
-      .attr('id', 'y-axis')
+      .attr('class', 'y-axis')
       .style('transform', `translate(` + this.margin + `px, 0)`);
 
     this.xAxis = this.svgInner.append('g')
-    .attr('id', 'x-axis')
+    .attr('class', 'x-axis')
     .style('transform', `translate(0, ` + (this.height - 2 * this.margin) + `px)`);
 
       
