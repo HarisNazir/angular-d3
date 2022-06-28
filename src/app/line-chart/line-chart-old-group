@@ -1,0 +1,82 @@
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
+import * as d3 from 'd3';
+
+@Component({
+  selector: 'app-line-chart',
+  templateUrl: './line-chart.component.html',
+  styleUrls: ['./line-chart.component.scss']
+})
+export class LineChartComponent implements OnInit {
+
+  @Input() public data!: { name: string, sport: string, nation: string, earnings: number }[];
+  
+  private width = 700;
+  private height = 700;
+  private margin = 50;
+  
+  public svg: any;
+  public svgInner: any;
+  public yScale: any;
+  public xScale: any;
+  public xAxis: any;
+  public yAxis: any;
+  public lineGroup: any;
+
+
+  public constructor(public chartElem: ElementRef) { }
+  
+  private initChart(): void {
+    this.svg = d3.create('svg')
+      .attr('width', this.width + this.margin * 2)
+      .attr('height', this.height + this.margin * 2)
+      .append('g')
+      .attr('transform', `translate(${this.margin}, ${this.margin})`);
+
+    this.svgInner = this.svg.append('g');
+
+    console.log(this.data)
+    const sumstat = d3.group(this.data || [], d => d.sport);
+
+    this.yScale = d3.scaleLinear()
+      .domain([0, d3.max(sumstat, d => d3.max(d, (d: any) => d.earnings))])
+      .range([this.height, 0]);
+
+    this.xScale = d3.scaleBand()
+      .domain(d3.extent(this.data, d => d.name) as any)
+      .range([0, this.width])
+      .padding(0.2);
+
+    this.xAxis = d3.axisBottom(this.xScale);
+
+    this.yAxis = d3.axisLeft(this.yScale);
+
+    this.svgInner.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', `translate(0, ${this.height})`)
+      .call(this.xAxis);
+
+    this.svgInner.append('g')
+      .attr('class', 'y axis')
+      .call(this.yAxis);
+      
+    this.lineGroup = this.svgInner.append('g')
+      .attr('class', 'line-group');
+
+  }
+    
+
+  public ngOnChange(changes: any): void{
+    if (changes.hasOwnProperty('data') && this.data){
+      this.initChart();
+    }
+  }
+
+
+  
+
+  ngOnInit(): void {
+    this.initChart();
+
+  }
+
+}
