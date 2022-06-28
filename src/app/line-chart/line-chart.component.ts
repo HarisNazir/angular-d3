@@ -36,6 +36,8 @@ export class LineChartComponent implements OnInit {
 
   drawLineChart() {
 
+    
+
     const groupedData = d3.group(this.data, d => d.type);
 
     
@@ -52,7 +54,7 @@ export class LineChartComponent implements OnInit {
 
     this.xAxis = this.svgInner.append('g')
     .attr('id', 'x-axis')
-      .style('transform', `translate(0, ` + (this.height - 2 * this.margin) + `px)`);
+    .style('transform', `translate(0, ` + (this.height - 2 * this.margin) + `px)`);
 
       
       this.width = this.chartElem.nativeElement.getBoundingClientRect().width;
@@ -61,23 +63,63 @@ export class LineChartComponent implements OnInit {
 
     this.xScale.range([this.margin, this.width - 2 * this.margin]);
 
+    console.log("Group Data", groupedData)
+
     groupedData.forEach((group: any) => {
-        this.lineGroup = this.svgInner.append('g')
-        .append('path')
-        .attr('id', 'line-group')
-        .style('fill', 'none')
-        .style('stroke', 'red')
-        .style('stroke-width', '2px');
+      console.log("Group Key: ", group);
+
+      // Causing Error because Group Key is undefined??
+      let color: string;
+      if (group[0].type === 'A') {
+        color = "red";
+      }
+      else if (group[0].type === 'B') {
+        color = "green";
+      }
+      else if (group[0].type === 'C') {
+        color = "blue";
+      }
+      else{
+        color = "black";
+      }
+      
+      this.lineGroup = this.svgInner.append('g')
+      .append('path')
+      .attr('id', 'line-group')
+      .style('fill', 'none')
+      .style('stroke', color)
+      .style('stroke-width', '2px');
   
-        this.lineGroup.datum(group)
-        .attr('d', d3.line()
-        .x((d: any) => this.xScale(new Date(d.date)))
-        .y((d: any) => this.yScale(d.value)));
+      this.lineGroup.datum(group)
+      .attr('d', d3.line()
+      .x((d: any) => this.xScale(new Date(d.date)))
+      .y((d: any) => this.yScale(d.value)));
     });
     const xAxis = d3
       .axisBottom(this.xScale)
       .ticks(10)
       .tickFormat(d3.timeFormat('%m / %Y') as any);
+
+    // Add Grid Lines to Chart
+    this.svgInner.append('g')
+      .attr('class', 'grid')
+      .style('transform', `translate(0, ` + (this.height - 2 * this.margin) + `px)`)
+      .call(d3.axisBottom(this.xScale)
+        .ticks(10)
+        .tickSize(-this.height + 2 * this.margin)
+        );
+      
+    
+    // Add Gird Lines to Y Axis
+    this.svgInner.append('g')
+      .attr('class', 'grid')
+      .style('transform', `translate(${this.margin}px, 0)`)
+      .call(d3.axisLeft(this.yScale)
+        .ticks(10)
+        .tickSize(-this.width + 2 * this.margin)
+        );
+    
+
 
     this.xAxis.call(xAxis);
 
