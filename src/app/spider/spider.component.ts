@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-spider',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./spider.component.scss']
 })
 export class SpiderComponent implements OnInit {
+
+  @Input() public spiderdata!: { axis: string, value: number, yOffset: number, xOffset: number }[];
 
   constructor() { }
 
