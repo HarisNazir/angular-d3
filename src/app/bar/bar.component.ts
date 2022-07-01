@@ -51,7 +51,7 @@ export class BarComponent {
         {
           label: 'Score',
           data: [10, 50, 25, 70, 40],
-          backgroundColor: ['blue', 'red', 'green', 'yellow', 'orange'],
+          backgroundColor: ['rgb(184,81,49)', 'rgb(225,174,61)', 'rgb(145,44,102)', 'rgb(129,112,74)', 'rgb(89,34,42)'],
           borderColor: 'lightblue',
           fill: false,
           lineTension: 0,

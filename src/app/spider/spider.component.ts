@@ -46,13 +46,31 @@ export class SpiderComponent {
   ngAfterViewInit() {
     let ctx: any = document.getElementById('spiderChart') as HTMLElement;
     var data = {
-      labels: ['match1', 'match2', 'match3', 'match4', 'match5', 'match6', 'match7', 'match8'],
+      labels: ['Category1', 'Category2', 'Category3', 'Category4', 'Category5', 'Category6', 'Category7', 'Category8'],
       datasets: [
         {
-          label: 'Score',
+          label: 'Line1',
           data: [10, 50, 25, 70, 40, 60, 30, 80],
-          backgroundColor: ['blue', 'red', 'green', 'yellow', 'orange', 'purple', 'pink', 'brown'],
-          borderColor: 'lightblue',
+          backgroundColor: 'rgb(145,44,102)',
+          borderColor: 'rgb(145,44,102',
+          fill: false,
+          lineTension: 0,
+          radius: 5,
+        },
+        {
+          label: 'Line2',
+          data: [20, 40, 30, 60, 50, 60, 40, 60],
+          backgroundColor: 'rgb(184,81,49)',
+          borderColor: 'rgb(184,81,49)',
+          fill: false,
+          lineTension: 0,
+          radius: 5,
+        },
+        {
+          label: 'Line3',
+          data: [30, 40, 45, 30, 60, 20, 40, 40],
+          backgroundColor: 'rgb(129,112,74)',
+          borderColor: 'rgb(129,112,74)',
           fill: false,
           lineTension: 0,
           radius: 5,
