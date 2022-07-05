@@ -1,0 +1,134 @@
+import { Component, ViewChild } from '@angular/core';
+// import {
+//   Chart,
+//   ArcElement,
+//   LineElement,
+//   BarElement,
+//   PointElement,
+//   BarController,
+//   BubbleController,
+//   DoughnutController,
+//   LineController,
+//   PieController,
+//   PolarAreaController,
+//   RadarController,
+//   ScatterController,
+//   CategoryScale,
+//   LinearScale,
+//   LogarithmicScale,
+//   RadialLinearScale,
+//   TimeScale,
+//   TimeSeriesScale,
+//   Decimation,
+//   Filler,
+//   Legend,
+//   Title,
+//   Tooltip,
+//   SubTitle,
+//   ChartDataset,
+//   ScatterDataPoint,
+//   BubbleDataPoint
+// } from 'chart.js';
+
+import Chart from 'chart.js/auto';
+import * as Utils from '../utils.js';
+
+@Component({
+  selector: 'app-progress',
+  templateUrl: './progress.component.html',
+  styleUrls: ['./progress.component.scss']
+})
+export class ProgressComponent {
+  chart: any;
+
+  ngAfterViewInit() {
+    let ctx: any = document.getElementById('progressChart') as HTMLElement;
+    
+    let data = {
+      labels: ['0-5 Days', '5-10 Days', '10+ Days'],
+      datasets: [
+        {
+          label: 'Score',
+          data: [27, 55, 85],
+          backgroundColor: ['rgb(184,81,49)', 'rgb(225,174,61)', 'rgb(145,44,102)'],
+          borderColor: 'lightblue',
+          fill: false,
+          lineTension: 0,
+          radius: 5,
+          borderRadius: 70
+        },
+      ],
+    };
+
+    //options
+    // var options = {
+    //   responsive: true,
+    //   title: {
+    //     display: true,
+    //     position: 'top',
+    //     text: 'Line Graph',
+    //     fontSize: 18,
+    //     fontColor: '#111',
+    //   },
+    //   legend: {
+    //     display: true,
+    //     position: 'bottom',
+    //     labels: {
+    //       fontColor: '#333',
+    //       fontSize: 16,
+    //     },
+    //   },
+    // };
+
+    let chart = new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: {
+        indexAxis: 'y',
+        scales:{
+          y:{
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
+            ticks: {
+              display: false,
+            }
+          },
+          x:{
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
+            ticks: {
+              display: false,
+            }
+          }
+          
+        },
+        animation: {
+          duration: 1,
+          onComplete: function() {
+            let chartInstance = chart;
+            
+            data.datasets.forEach(function(dataset: any, i: any) {
+              let meta = chart.getDatasetMeta(i);
+              meta.data.forEach(function(bar: any, index: any) {
+        
+                let label = data.labels[index];
+                let xOffset = 10;
+                // Set yOffset to be above bar
+                let yOffset = -10;
+
+                // Place label above bar
+                chartInstance.ctx.font = '12px Arial';
+                chartInstance.ctx.fillStyle = '#333';
+                chartInstance.ctx.fillText(label, bar._model.x + xOffset, bar._model.y + yOffset);
+              });
+            } as any);
+          }
+        }
+      },
+    });
+  }
+}

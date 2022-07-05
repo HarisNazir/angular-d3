@@ -1,0 +1,21 @@
+.wrapper-bar,
+.bar {
+    height: 6px;
+    border-radius: 3px;
+    transition: width 1s;
+}
+
+.labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.labels {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.labels .value {
+    font-weight: 'bold';
+    font-size: 1.5em;
+}
