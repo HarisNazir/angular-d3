@@ -61,58 +61,115 @@ import * as Utils from '../utils.js';
 })
 
 export class ProgressComponent implements OnInit {
-    ngOnInit(): void {
-        throw new Error('Method not implemented.');
+
+  chart: any;
+
+  ngAfterViewInit(){
+    let ctx: any = document.getElementById('progressChart') as HTMLElement;
+
+    var data = {
+      labels: ['0 - 5 Days', '5 - 10 Days', '10 -15 Days', '15 + Days'],
+      datasets: [{
+        label: 'Weekly Sales',
+        data: [18, 12, 6, 9],
+        borderColor: [
+          'rgba(184, 81, 49, 0.2)',
+          'rgba(225, 174, 61, 0.2)',
+          'rgba(130, 113, 75, 0.2)',
+          'rgba(93, 39, 47, 0.2)',
+        ],
+        backgroundColor: [
+          'rgba(184, 81, 49, 1)',
+          'rgba(225, 174, 61, 1)',
+          'rgba(130, 113, 75, 1)',
+          'rgba(93, 39, 47, 1)',
+        ],
+        borderWidth: 0,
+        borderSkipped: false as any,
+        borderRadius: 5,
+        barPercentage: 0.2,
+        categoryPercentage: 0.8,
+      }]
+    };
+
+    //Progress Bar Plugin
+    var progressBar = {
+      id: 'progressBar',
+      beforeDatasetsDraw: function (chart: any, args: any, pluginOptions: any) {
+        const {ctx, data, chartArea: {top, bottom, left, right, width, height}, scales: {x,y} } = chart;
+
+        ctx.save();
+
+        //Calculate Height
+        const borderHeight = height / y.ticks.length * data.datasets[0].barPercentage * data.datasets[0].categoryPercentage;
+
+        data.datasets[0].data.forEach((datapoint: any, index: any) => {
+          // Label Text
+          const fontSizeLabel = 12;
+          ctx.font = `${fontSizeLabel}px sans-serif`;
+          ctx.fillStyle = 'rgba(102,102,102,1)';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+
+          ctx.fillText(data.labels[index], left, y.getPixelForValue(index) - fontSizeLabel - 5);
+
+
+          // Value Text
+          const fontSizeDatapoint = 15;
+          ctx.font = `bolder ${fontSizeDatapoint}px sans-serif`;
+          ctx.fillStyle = 'rgba(102,102,102,1)';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+
+          ctx.fillText(datapoint, right, y.getPixelForValue(index) - fontSizeDatapoint - 5);
+
+          // Background color of progress bar
+          ctx.beginPath();
+          ctx.fillStyle = data.datasets[0].borderColor[index];
+          ctx.fillRect(left, y.getPixelForValue(index) - (borderHeight)/2, width, borderHeight)
+        });
+        
+      }
     }
-//   ngOnInit(): void {
-//     Bars()
-//   }
-//   const data = [
-//     { label: '0 - 5 days', value: 27, color: 'red', bgColor: 'lightsalmon' },
-//     { label: '5 - 10 days', value: 54, color: 'blue', bgColor: 'lightblue' },
-//     { label: '10+ days', value: 85, color: 'green', bgColor: 'lightgreen' },
-// ];
-//   Bars(selector, data, maxValue) {
 
-//     const wrapper = document.querySelector(selector);
-//     let html = '';
-//     data.forEach((item, idx) => {
-//         html += `
-//             <div class="labels">
-//                 <div class="label">${item.label}</div>
-//                 <div class="value">${item.value}</div>
-//             </div>
-//             <div class="wrapper-bar">
-//                 <div class="bar" style="width: 0;"></div>    
-//             </div>
-//             `;
-//     });
-//     wrapper.innerHTML = html;
-//     this.update = data => {
-//         const
-//             values = wrapper.querySelectorAll('.value'),
-//             wrapperBars = wrapper.querySelectorAll('.wrapper-bar'),
-//             bars = wrapper.querySelectorAll('.bar');
-//         data.forEach((item, idx) => {
-//             values[idx].textContent = item.value;
-//             bars[idx].style.width = item.value / maxValue * 100 + '%';
-//             wrapperBars[idx].style.backgroundColor = item.bgColor;
-//             bars[idx].style.backgroundColor = item.color;
-//         });
-//     }
-//     setTimeout(() => {
-//         this.update(data);
-//     });
-// }
+    var chart = new Chart(ctx,{
+      type: 'bar',
+      data: data,
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: {
+            display: false
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid:{
+              display: false,
+              drawBorder: false
+            },
+            ticks: {
+              display: false
+            }
+          },
+          x: {
+            grid:{
+              display: false,
+              drawBorder: false
+            },
+            ticks: {
+              display: false
+            }
+          },
+        }
+      },
+      plugins: [progressBar]
+    });
 
-// // Create bars initially:
-// theBars = new Bars('#wrapper-bars', data, 100, 5);
+  }
 
-// // Just for demo: Update values after 2 secs:
-// setTimeout(() => {
-//     data.forEach(item => {
-//         item.value += 10;
-//     });
-//     theBars.update(data)
-// }, 2000);
+  constructor() { }
+
+  ngOnInit() {}
 }

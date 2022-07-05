@@ -15,11 +15,11 @@ export class DoughnutComponent {
     let ctx: any = document.getElementById('doughnutChart') as HTMLElement;
 
     var data = {
-      labels: ['Data1', 'Data2', 'Data3', 'Data4', 'Data5'],
+      labels: ['Data1', 'Data2', 'Data3', 'Data4', ],
       datasets: [
         {
-          data: [10, 50, 25, 70, 40],
-          backgroundColor: ['rgb(184,81,49)', 'rgb(225,174,61)', 'rgb(145,44,102)', 'rgb(129,112,74)', 'rgb(89,34,42)'],
+          data: [10, 50, 25, 70],
+          backgroundColor: ['rgb(184,81,49)', 'rgb(225,174,61)', 'rgb(145,44,102)', 'rgb(129,112,74)'],
           fill: false,
         },
       ]
@@ -45,7 +45,20 @@ export class DoughnutComponent {
     var chart = new Chart(ctx, {
       type: 'doughnut',
       data: data,
-      options: options,
+      options: {
+        responsive: true,
+        cutout: 250,
+        plugins:{
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'circle',
+            }
+          }
+        }
+      },
     });
 
 

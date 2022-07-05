@@ -55,7 +55,7 @@ export class SpiderComponent {
           borderColor: 'rgb(145,44,102',
           fill: false,
           lineTension: 0,
-          radius: 5,
+          pointRadius: 0,
         },
         {
           label: 'Line2',
@@ -64,7 +64,7 @@ export class SpiderComponent {
           borderColor: 'rgb(184,81,49)',
           fill: false,
           lineTension: 0,
-          radius: 5,
+          pointRadius: 0,
         },
         {
           label: 'Line3',
@@ -73,35 +73,27 @@ export class SpiderComponent {
           borderColor: 'rgb(129,112,74)',
           fill: false,
           lineTension: 0,
-          radius: 5,
+          pointRadius: 0,
         },
       ],
-    };
-
-    //options
-    var options = {
-      responsive: true,
-      title: {
-        display: true,
-        position: 'top',
-        text: 'Line Graph',
-        fontSize: 18,
-        fontColor: '#111',
-      },
-      legend: {
-        display: true,
-        position: 'bottom',
-        labels: {
-          fontColor: '#333',
-          fontSize: 16,
-        },
-      },
     };
 
     var chart = new Chart(ctx, {
       type: 'radar',
       data: data,
-      options: options,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'circle',
+            }
+          }
+        }
+      },
     });
   }
 }

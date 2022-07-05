@@ -1,34 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-// import {
-//   Chart,
-//   ArcElement,
-//   LineElement,
-//   BarElement,
-//   PointElement,
-//   BarController,
-//   BubbleController,
-//   DoughnutController,
-//   LineController,
-//   PieController,
-//   PolarAreaController,
-//   RadarController,
-//   ScatterController,
-//   CategoryScale,
-//   LinearScale,
-//   LogarithmicScale,
-//   RadialLinearScale,
-//   TimeScale,
-//   TimeSeriesScale,
-//   Decimation,
-//   Filler,
-//   Legend,
-//   Title,
-//   Tooltip,
-//   SubTitle,
-//   ChartDataset,
-//   ScatterDataPoint,
-//   BubbleDataPoint
-// } from 'chart.js';
 
 import Chart from 'chart.js/auto';
 import * as Utils from '../utils.js';
@@ -60,30 +30,18 @@ export class BarComponent {
       ],
     };
 
-    //options
-    var options = {
-      responsive: true,
-      title: {
-        display: true,
-        position: 'top',
-        text: 'Line Graph',
-        fontSize: 18,
-        fontColor: '#111',
-      },
-      legend: {
-        display: true,
-        position: 'bottom',
-        labels: {
-          fontColor: '#333',
-          fontSize: 16,
-        },
-      },
-    };
 
     var chart = new Chart(ctx, {
       type: 'bar',
       data: data,
-      options: options,
+      options: {
+        responsive: true,
+        plugins:{
+          legend: {
+            display: false,
+          }
+        }
+      },
     });
   }
 }
